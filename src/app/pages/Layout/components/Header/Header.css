@@ -1,0 +1,7 @@
+.header-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #94bbe9;
+  background: linear-gradient(0deg, rgba(148, 187, 233, 1) 0%, rgba(250, 207, 122, 1) 100%);
+}

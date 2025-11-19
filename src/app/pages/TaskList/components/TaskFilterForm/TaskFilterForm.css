@@ -1,0 +1,14 @@
+.filter-wrap {
+  display: flex;
+
+  align-items: center;
+}
+.filter-control > .form-check {
+  position: relative;
+  top: 6px;
+}
+
+.filter-control {
+  display: flex;
+  gap: 5px;
+}
