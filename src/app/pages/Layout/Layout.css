@@ -1,6 +1,6 @@
 .wrap {
   max-width: 900px;
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 160px);
   margin: 0 auto;
   background: #eeaeca;
   background: linear-gradient(12deg, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 56%);

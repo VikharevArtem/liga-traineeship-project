@@ -5,10 +5,10 @@ import { LayoutProps } from './LayoutProps.types';
 import { PageContainer } from 'components/PageContainer';
 import './Layout.css';
 
-export const Layout: FC<LayoutProps> = ({ children, pageContainerClassName }) => {
+export const Layout: FC<LayoutProps> = ({ children, headerChildren, pageContainerClassName }) => {
   return (
     <>
-      <Header />
+      <Header>{headerChildren}</Header>
       <main>
         <div className="wrap">
           <PageContainer className={pageContainerClassName}>{children}</PageContainer>

@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Layout } from '../Layout/Layout';
+import { NavButton } from '../Layout/components/Header/components/NavButton/NavButton';
 import { TaskListItem } from './components/TaskListItem/TaskListItem';
 import { TaskFilterForm } from './components/TaskFilterForm/TaskFilterForm';
 import { deleteTask, getTasks } from 'mocks/myTasks';
 import { Task } from 'types/Task.types';
-import { Button } from 'components/Button/Button';
 
 export const TaskList = (): JSX.Element => {
   const [searchParams] = useSearchParams();
@@ -44,13 +44,16 @@ export const TaskList = (): JSX.Element => {
     refershTasks();
   };
 
+  const navPanel = (
+    <>
+      <NavButton to={'/task/new'} text={'Создать задачу'} /> <TaskFilterForm />
+    </>
+  );
+
   return (
-    <Layout>
-      <Button>
-        <Link to="/task/new">Создать задачу</Link>
-      </Button>
+    <Layout headerChildren={<>{navPanel}</>}>
       <h1>Список задач</h1>
-      <TaskFilterForm />
+
       <ul>
         {filteredTasks.map((task) => (
           <TaskListItem key={task.id} task={task} onDelete={handleDeleteTask} />

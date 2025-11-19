@@ -47,10 +47,13 @@ export const TaskForm = () => {
   };
 
   return (
-    <Layout>
-      <Link to="/tasks">
-        <Button>К списку задач</Button>
-      </Link>
+    <Layout
+      headerChildren={
+        <Link to="/tasks">
+          <Button>К списку задач</Button>
+        </Link>
+      }>
+      <h1>{!id ? 'Создание новой задачи' : 'Обновление задачи'}</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
           name="name"
