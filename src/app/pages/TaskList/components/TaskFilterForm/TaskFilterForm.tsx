@@ -8,40 +8,31 @@ export function TaskFilterForm() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchName = searchParams.get('searchName') || '';
-  const isCompletedParam = searchParams.get('isCompleted');
-  const isImportantParam = searchParams.get('isImportant');
+  const isCompleted = searchParams.get('isCompleted') === 'true';
+  const isImportant = searchParams.get('isImportant') === 'true';
 
-  const isCompleted = isCompletedParam === 'true';
-  const isImportant = isImportantParam === 'true';
+  const hasActiveFilters = searchName || isCompleted || isImportant;
 
-  const handleSearchChange = (value: string) => {
+  const updateSearchParams = (key: string, value: string | null) => {
     const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set('searchName', value);
+    if (value === null) {
+      newParams.delete(key);
     } else {
-      newParams.delete('searchName');
+      newParams.set(key, value);
     }
     setSearchParams(newParams, { replace: true });
+  };
+
+  const handleSearchChange = (value: string) => {
+    updateSearchParams('searchName', value === '' ? null : value);
   };
 
   const handleCompletedChange = () => {
-    const newParams = new URLSearchParams(searchParams);
-    if (isCompleted) {
-      newParams.delete('isCompleted');
-    } else {
-      newParams.set('isCompleted', 'true');
-    }
-    setSearchParams(newParams, { replace: true });
+    updateSearchParams('isCompleted', isCompleted ? null : 'true');
   };
 
   const handleImportantChange = () => {
-    const newParams = new URLSearchParams(searchParams);
-    if (isImportant) {
-      newParams.delete('isImportant');
-    } else {
-      newParams.set('isImportant', 'true');
-    }
-    setSearchParams(newParams, { replace: true });
+    updateSearchParams('isImportant', isImportant ? null : 'true');
   };
 
   const handleReset = () => {
@@ -55,7 +46,12 @@ export function TaskFilterForm() {
         <Checkbox label="Завершенные" checked={isCompleted} onChange={handleCompletedChange} />
         <Checkbox label="Важные" checked={isImportant} onChange={handleImportantChange} />
       </div>
-      <Button onClick={handleReset}>Сбросить фильтры</Button>
+      <Button
+        buttonClassName={!hasActiveFilters ? 'btn-disabled' : ''}
+        onClick={handleReset}
+        disabled={!hasActiveFilters}>
+        Сбросить фильтры
+      </Button>
     </div>
   );
 }

@@ -2,21 +2,21 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { Layout } from '../Layout/Layout';
-import { TaskFormValues } from './TaskForm.types';
 import { Checkbox } from 'components/Checkbox';
 import { TextField } from 'components/TextField';
-import { addTask, getTasks, updateTask } from 'mocks/myTasks';
 import { Button } from 'components/Button/Button';
+import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
+import { addTask, selectTaskById, updateTask } from 'src/slices/tasks/tasksSlice';
+import { CreateTask } from 'types/Task.types';
 
 export const TaskForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isEdit = Boolean(id);
   const taskId = id ? Number(id) : null;
-
-  const currentTask = taskId ? getTasks().find((t) => t.id === taskId) : null;
-
-  const { control, handleSubmit, reset } = useForm<TaskFormValues>({
+  const currentTask = useAppSelector((state) => selectTaskById(state, Number(id)));
+  const { control, handleSubmit, reset } = useForm<CreateTask>({
     defaultValues: {
       name: '',
       info: '',
@@ -36,11 +36,16 @@ export const TaskForm = () => {
     }
   }, [isEdit, currentTask, reset]);
 
-  const onSubmit = (data: TaskFormValues) => {
+  const onSubmit = (data: CreateTask) => {
     if (isEdit && taskId) {
-      updateTask(taskId, data);
+      dispatch(
+        updateTask({
+          id: taskId,
+          updatedData: data,
+        })
+      );
     } else {
-      addTask(data);
+      dispatch(addTask(data));
     }
 
     navigate('/tasks');
