@@ -1,19 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Layout } from '../Layout/Layout';
 import { NavButton } from '../Layout/components/Header/components/NavButton/NavButton';
 import { TaskListItem } from './components/TaskListItem/TaskListItem';
 import { TaskFilterForm } from './components/TaskFilterForm/TaskFilterForm';
-import { deleteTask, getTasks } from 'mocks/myTasks';
-import { Task } from 'types/Task.types';
+import { useAppSelector } from 'src/hooks/redux';
+import { selectTasks } from 'src/slices/tasks/tasksSlice';
+import { filterTasks } from 'utils/filterTasks';
 
 export const TaskList = (): JSX.Element => {
   const [searchParams] = useSearchParams();
-  const [tasks, setTasks] = useState<Task[]>(getTasks());
 
-  const refershTasks = () => {
-    setTasks(getTasks());
-  };
+  const tasks = useAppSelector(selectTasks);
 
   const filters = useMemo(() => {
     const searchName = searchParams.get('searchName') || '';
@@ -24,41 +22,30 @@ export const TaskList = (): JSX.Element => {
   }, [searchParams]);
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
-      if (filters.searchName && !task.name.toLowerCase().includes(filters.searchName.toLowerCase())) {
-        return false;
-      }
-      if (filters.isCompleted !== null && task.isCompleted !== filters.isCompleted) {
-        return false;
-      }
-      if (filters.isImportant !== null && task.isImportant !== filters.isImportant) {
-        return false;
-      }
-
-      return true;
-    });
+    return filterTasks(tasks, filters);
   }, [tasks, filters]);
 
-  const handleDeleteTask = (id: number) => {
-    deleteTask(id);
-    refershTasks();
-  };
-
-  const navPanel = (
-    <>
-      <NavButton to={'/task/new'} text={'Создать задачу'} /> <TaskFilterForm />
-    </>
-  );
-
   return (
-    <Layout headerChildren={<>{navPanel}</>}>
+    <Layout
+      headerChildren={
+        <>
+          <NavButton to={'/task/new'} text={'Создать задачу'} />
+          <TaskFilterForm />
+        </>
+      }>
       <h1>Список задач</h1>
-
-      <ul>
-        {filteredTasks.map((task) => (
-          <TaskListItem key={task.id} task={task} onDelete={handleDeleteTask} />
-        ))}
-      </ul>
+      {filteredTasks.length > 0 ? (
+        <ul>
+          {filteredTasks.map((task) => (
+            <TaskListItem key={task.id} task={task} />
+          ))}
+        </ul>
+      ) : (
+        <div>
+          <h2>Задачи не найдены</h2>
+          <p>Попробуйте изменить параметры фильтра</p>
+        </div>
+      )}
     </Layout>
   );
 };

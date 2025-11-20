@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 import { TaskItemProps } from './TaskItemProps.types';
 import './TaskListItem.css';
+import { useAppDispatch } from 'src/hooks/redux';
+import { deleteTask } from 'src/slices/tasks/tasksSlice';
 
-export const TaskListItem = ({ task, onDelete }: TaskItemProps) => {
+export const TaskListItem = ({ task }: TaskItemProps) => {
+  const dispatch = useAppDispatch();
+
   const handleDeleteTask = () => {
-    onDelete(task.id);
+    dispatch(deleteTask(task.id));
   };
   return (
     <li className="task-card">
