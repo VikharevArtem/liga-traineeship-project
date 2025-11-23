@@ -1,21 +1,39 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TaskItemProps } from './TaskItemProps.types';
 import './TaskListItem.css';
+
 import { useAppDispatch } from 'src/hooks/redux';
-import { deleteTask } from 'src/slices/tasks/tasksSlice';
+import { deleteTaskAsync } from 'src/slices/tasks/tasksSlice';
+import { Button } from 'components/Button/Button';
 
 export const TaskListItem = ({ task }: TaskItemProps) => {
   const dispatch = useAppDispatch();
+  const [isDelete, setIsDelete] = useState(false);
 
-  const handleDeleteTask = () => {
-    dispatch(deleteTask(task.id));
+  const handleDeleteConfirm = () => {
+    setIsDelete(true);
   };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await dispatch(deleteTaskAsync(id)).unwrap();
+    } catch (err) {
+      alert(err);
+    }
+  };
+
   return (
     <li className="task-card">
       <div className="task-card__header">
-        <h3 className={`${task.isCompleted && 'completed'}`}>{task.name}</h3>
+        <div className="task-card__title">
+          <h3 className={`${task.isCompleted && 'completed'}`}>{task.name}</h3>
+          <div className={`task-tag ${task.isImportant && 'important'}`}>
+            <span>{task.isImportant && 'Важная'}</span>
+          </div>
+        </div>
         <div className="task-card__header-actions">
-          <Link className="task-edit" to={`/task/update/${task.id}`}>
+          <Link className="task-edit" to={`/task/update/${task.id}`} state={{ formFilters: location.search }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48">
               <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4">
                 <path d="M30.9995 8.99902L38.9995 16.999" />
@@ -26,7 +44,7 @@ export const TaskListItem = ({ task }: TaskItemProps) => {
               </g>
             </svg>
           </Link>
-          <a className="task-delete" onClick={handleDeleteTask}>
+          <a className="task-delete" onClick={() => handleDeleteConfirm()}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
@@ -37,7 +55,15 @@ export const TaskListItem = ({ task }: TaskItemProps) => {
         </div>
       </div>
       <p>{task.info ? task.info : 'Описание задачи отсутствует'}</p>
-      <div className={`task-tag ${task.isImportant && 'important'}`}>{task.isImportant && 'Важная'}</div>
+      {isDelete && (
+        <div className="confirm-delete">
+          <span className="confirm-delete-message">Вы действительно хотите удалить задач у?</span>
+          <div className="conform-delete-control">
+            <Button onClick={() => handleDelete(task.id)}>Да</Button>
+            <Button onClick={() => setIsDelete(false)}>Нет</Button>
+          </div>
+        </div>
+      )}
     </li>
   );
 };

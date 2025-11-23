@@ -1,13 +1,14 @@
 .custom-btn {
-  border: 1px solid #56b2c7;
-  border-radius: 15px;
-  background-color: #3c7e8c;
+  border: 1px solid #68b7ec;
+  border-radius: 5px;
+  background-color: #a8c6ff;
   color: #000;
-  padding: 10px;
+  padding: 5px 10px;
   margin: 5px;
 }
 
-.btn-disabled {
-  background-color: #aecbd1;
+.custom-btn:disabled {
+  border: 1px solid #e1f2fd;
+  background-color: #ecfeff;
   color: gray;
 }

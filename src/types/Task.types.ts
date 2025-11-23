@@ -1,11 +1,5 @@
-export interface Task {
-  id: number;
-  name: string;
-  info?: string;
-  isImportant?: boolean;
-  isCompleted?: boolean;
-}
+import { components } from 'types/api';
 
-export type CreateTask = Omit<Task, 'id'>;
-
-export type UpdateTask = Partial<Task>;
+export type Task = components['schemas']['Task'] & { id: number };
+export type CreateTask = components['schemas']['CreateTask'];
+export type UpdateTask = components['schemas']['UpdateTask'];

@@ -1,51 +1,69 @@
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Layout } from '../Layout/Layout';
-import { NavButton } from '../Layout/components/Header/components/NavButton/NavButton';
+import { useEffect, useMemo } from 'react';
 import { TaskListItem } from './components/TaskListItem/TaskListItem';
 import { TaskFilterForm } from './components/TaskFilterForm/TaskFilterForm';
-import { useAppSelector } from 'src/hooks/redux';
-import { selectTasks } from 'src/slices/tasks/tasksSlice';
-import { filterTasks } from 'utils/filterTasks';
+import { NavButton } from 'app/pages/Layout/components/Header/components/NavButton/NavButton';
+import { Layout } from 'app/pages/Layout/Layout';
+import { useTasks } from 'src/hooks/useTasks';
+import { Loader } from 'components/Loader/Loader';
+import { Pagination } from 'components/Pagination/Pagination';
+import { clearError } from 'src/slices/tasks/tasksSlice';
+import { useAppDispatch } from 'src/hooks/redux';
 
 export const TaskList = (): JSX.Element => {
-  const [searchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
+  const { tasks, loading, error, pagination, goToPage, setLimit } = useTasks();
 
-  const tasks = useAppSelector(selectTasks);
+  const headerChildren = useMemo(() => <NavButton to={'/task/new'} text={'Создать задачу'} />, []);
 
-  const filters = useMemo(() => {
-    const searchName = searchParams.get('searchName') || '';
-    const isCompleted = searchParams.get('isCompleted') === 'true' || null;
-    const isImportant = searchParams.get('isImportant') === 'true' || null;
+  const tasksContent = useMemo(() => {
+    if (error) {
+      return <div className="error">{error}</div>;
+    }
 
-    return { searchName, isCompleted, isImportant };
-  }, [searchParams]);
+    if (tasks.length === 0) {
+      return (
+        <div>
+          <h2>Задачи не найдены</h2>
+          <p>Попробуйте изменить фильтры</p>
+        </div>
+      );
+    }
 
-  const filteredTasks = useMemo(() => {
-    return filterTasks(tasks, filters);
-  }, [tasks, filters]);
-
-  return (
-    <Layout
-      headerChildren={
-        <>
-          <NavButton to={'/task/new'} text={'Создать задачу'} />
-          <TaskFilterForm />
-        </>
-      }>
-      <h1>Список задач</h1>
-      {filteredTasks.length > 0 ? (
+    return (
+      <>
         <ul>
-          {filteredTasks.map((task) => (
+          {tasks.map((task) => (
             <TaskListItem key={task.id} task={task} />
           ))}
         </ul>
-      ) : (
-        <div>
-          <h2>Задачи не найдены</h2>
-          <p>Попробуйте изменить параметры фильтра</p>
-        </div>
-      )}
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+          itemsPerPage={pagination.limit}
+          totalItems={pagination.totalResults}
+          onPageChange={goToPage}
+          onLimitChange={setLimit}
+        />
+      </>
+    );
+  }, [tasks, error, goToPage, setLimit]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
+  return (
+    <Layout
+      pageContainerClassName="tasks-list-wrap"
+      headerChildren={headerChildren}
+      sidebarPosition="left"
+      childrenSidebar={<TaskFilterForm />}>
+      <h1>Список задач</h1>
+      <Loader isLoading={loading} variant="circle">
+        {tasksContent}
+      </Loader>
     </Layout>
   );
 };
