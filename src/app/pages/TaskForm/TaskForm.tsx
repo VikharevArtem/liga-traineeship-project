@@ -1,12 +1,12 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Layout } from 'app/pages/Layout/Layout';
 import { Checkbox } from 'components/Checkbox';
 import { TextField } from 'components/TextField';
 import { Button } from 'components/Button/Button';
 import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
-import { addNewTask, fetchTask, updateTaskAsync } from 'src/slices/tasks/tasksSlice';
+import { addNewTask, fetchTask, updateTaskAsync, clearError } from 'src/slices/tasks/tasksSlice';
 import { CreateTask } from 'types/Task.types';
 import { Loader } from 'components/Loader';
 
@@ -49,15 +49,6 @@ export const TaskForm = () => {
     }
   }, [isEdit, task, reset, navigate]);
 
-  useEffect(() => {
-    if (error && isEdit) {
-      const timer = setTimeout(() => {
-        navigate('/tasks');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, isEdit, navigate]);
-
   const onSubmit = async (data: CreateTask) => {
     try {
       if (isEdit) {
@@ -67,9 +58,15 @@ export const TaskForm = () => {
       }
       navigate('/tasks');
     } catch (err) {
-      console.log('Ошибка при сохранении задачи:', err);
+      // Ошибка уже обработана в Redux (через extraReducers)
     }
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
 
   return (
     <Layout
@@ -78,41 +75,34 @@ export const TaskForm = () => {
           К списку задач
         </Button>
       }>
+      <div className="task-form-wrap"></div>
       <Loader isLoading={loading} variant={'circle'}>
         <h1>{isEdit ? 'Обновление задачи' : 'Создание новой задачи'}</h1>
-        {error ? (
-          <div style={{ color: '#ff0505ff' }}>
-            {error} <span>Вы будете перенаправленны к списку задач</span>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <TextField label="Название задачи" value={field.value} onChange={field.onChange} />
-              )}
-            />
-            <Controller
-              name="info"
-              control={control}
-              render={({ field }) => (
-                <TextField label="Описание задачи" value={field.value} onChange={field.onChange} />
-              )}
-            />
-            <Controller
-              name="isImportant"
-              control={control}
-              render={({ field }) => <Checkbox label="Важная" checked={field.value} onChange={field.onChange} />}
-            />
-            <Controller
-              name="isCompleted"
-              control={control}
-              render={({ field }) => <Checkbox label="Завершенная" checked={field.value} onChange={field.onChange} />}
-            />
-            <Button type="submit">{!id ? 'Создать' : 'Обновить'}</Button>
-          </form>
-        )}
+        {error && <div className="error">{error}</div>}
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => <TextField label="Название задачи" value={field.value} onChange={field.onChange} />}
+          />
+          <Controller
+            name="info"
+            control={control}
+            render={({ field }) => <TextField label="Описание задачи" value={field.value} onChange={field.onChange} />}
+          />
+          <Controller
+            name="isImportant"
+            control={control}
+            render={({ field }) => <Checkbox label="Важная" checked={field.value} onChange={field.onChange} />}
+          />
+          <Controller
+            name="isCompleted"
+            control={control}
+            render={({ field }) => <Checkbox label="Завершенная" checked={field.value} onChange={field.onChange} />}
+          />
+          <Button type="submit">{!id ? 'Создать' : 'Обновить'}</Button>
+        </form>
       </Loader>
     </Layout>
   );

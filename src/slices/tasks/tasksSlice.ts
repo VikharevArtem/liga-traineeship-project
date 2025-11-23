@@ -95,8 +95,8 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    resetCurrentTask(state) {
-      state.task = null;
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -157,3 +157,5 @@ export const selectTasks = (state: RootState) => state.tasks.tasks;
 export const selectLoading = (state: RootState) => state.tasks.loading;
 export const selectError = (state: RootState) => state.tasks.error;
 export const selectTask = (state: RootState) => state.tasks.task;
+
+export const { clearError } = tasksSlice.actions;
