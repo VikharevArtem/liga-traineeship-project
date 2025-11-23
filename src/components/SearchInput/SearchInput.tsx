@@ -2,7 +2,7 @@ import React, { ChangeEventHandler, MouseEvent } from 'react';
 import './SearchInput.css';
 import { SearchInputProps } from './SearchInput.types';
 
-export function SearchInput({ onChange, value, onReset, plaseholder }: SearchInputProps) {
+export function SearchInput({ onChange, value, onReset, placeholder }: SearchInputProps) {
   const onSearchInputChange: ChangeEventHandler<HTMLInputElement> = (evt) => onChange(evt.target.value);
 
   const onResetBtnClick = (evt: MouseEvent<HTMLButtonElement>) => {
@@ -14,7 +14,7 @@ export function SearchInput({ onChange, value, onReset, plaseholder }: SearchInp
     <div className="search-panel">
       <input
         className="form-control search-input"
-        placeholder={plaseholder ? plaseholder : 'search'}
+        placeholder={placeholder ? placeholder : 'search'}
         onChange={onSearchInputChange}
         value={value}
       />

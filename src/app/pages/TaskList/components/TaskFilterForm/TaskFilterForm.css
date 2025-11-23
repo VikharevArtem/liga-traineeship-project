@@ -1,7 +1,6 @@
 .filter-wrap {
   display: flex;
-
-  align-items: center;
+  flex-direction: column;
 }
 .filter-control > .form-check {
   position: relative;
@@ -10,5 +9,14 @@
 
 .filter-control {
   display: flex;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-params {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
 }

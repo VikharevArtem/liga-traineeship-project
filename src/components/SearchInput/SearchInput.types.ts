@@ -3,5 +3,5 @@ export interface SearchInputProps {
   onChange: (text: string) => void;
   value: string;
   onReset?: () => void;
-  plaseholder?: string;
+  placeholder?: string;
 }
