@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TaskItemProps } from './TaskItemProps.types';
 import './TaskListItem.css';
@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/hooks/redux';
 import { deleteTaskAsync } from 'src/slices/tasks/tasksSlice';
 import { Button } from 'components/Button/Button';
 
-export const TaskListItem = ({ task }: TaskItemProps) => {
+const TaskListItemComponent = ({ task }: TaskItemProps) => {
   const dispatch = useAppDispatch();
   const [isDelete, setIsDelete] = useState(false);
 
@@ -33,7 +33,7 @@ export const TaskListItem = ({ task }: TaskItemProps) => {
           </div>
         </div>
         <div className="task-card__header-actions">
-          <Link className="task-edit" to={`/task/update/${task.id}`} state={{ formFilters: location.search }}>
+          <Link className="task-edit" to={`/task/update/${task.id}`}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48">
               <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4">
                 <path d="M30.9995 8.99902L38.9995 16.999" />
@@ -67,3 +67,5 @@ export const TaskListItem = ({ task }: TaskItemProps) => {
     </li>
   );
 };
+
+export const TaskListItem = memo(TaskListItemComponent);

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export const useClientPagination = (totalItems: number, defaultLimit = 5) => {
@@ -30,26 +30,32 @@ export const useClientPagination = (totalItems: number, defaultLimit = 5) => {
     return { from, to };
   }, [from, to]);
 
-  const goToPage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    if (newPage > 0) {
-      params.set('p', newPage.toString());
-    } else {
-      params.delete('p');
-    }
-    setSearchParams(params);
-  };
+  const goToPage = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams);
+      if (newPage > 0) {
+        params.set('p', newPage.toString());
+      } else {
+        params.delete('p');
+      }
+      setSearchParams(params);
+    },
+    [searchParams, setSearchParams]
+  );
 
-  const setLimit = (newLimit: number) => {
-    const params = new URLSearchParams(searchParams);
-    if (newLimit > 0) {
-      params.set('l', newLimit.toString());
-    } else {
-      params.delete('l');
-    }
-    params.set('p', '1');
-    setSearchParams(params);
-  };
+  const setLimit = useCallback(
+    (newLimit: number) => {
+      const params = new URLSearchParams(searchParams);
+      if (newLimit > 0) {
+        params.set('l', newLimit.toString());
+      } else {
+        params.delete('l');
+      }
+      params.set('p', '1');
+      setSearchParams(params);
+    },
+    [searchParams, setSearchParams]
+  );
 
   return {
     pagination: {

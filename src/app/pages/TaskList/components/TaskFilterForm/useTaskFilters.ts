@@ -1,15 +1,18 @@
 import { useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react';
 import { FilterKey } from './TaskFilterForm.types';
 import { stringToBoolean } from 'utils/stringsToBolean';
 
 export const useTaskFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const filters = {
-    searchName: searchParams.get('searchName') || '',
-    important: stringToBoolean(searchParams.get('important')),
-    completed: stringToBoolean(searchParams.get('completed')),
-  };
+  const filters = useMemo(() => {
+    return {
+      searchName: searchParams.get('searchName') || '',
+      important: stringToBoolean(searchParams.get('important')),
+      completed: stringToBoolean(searchParams.get('completed')),
+    };
+  }, [searchParams]);
 
   const setFilter = (key: FilterKey, value: boolean | null) => {
     const newParams = new URLSearchParams(searchParams);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { TaskListItem } from './components/TaskListItem/TaskListItem';
 import { TaskFilterForm } from './components/TaskFilterForm/TaskFilterForm';
 import { NavButton } from 'app/pages/Layout/components/Header/components/NavButton/NavButton';
@@ -13,41 +13,6 @@ export const TaskList = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const { tasks, loading, error, pagination, goToPage, setLimit } = useTasks();
 
-  const headerChildren = useMemo(() => <NavButton to={'/task/new'} text={'Создать задачу'} />, []);
-
-  const tasksContent = useMemo(() => {
-    if (error) {
-      return <div className="error">{error}</div>;
-    }
-
-    if (tasks.length === 0) {
-      return (
-        <div>
-          <h2>Задачи не найдены</h2>
-          <p>Попробуйте изменить фильтры</p>
-        </div>
-      );
-    }
-
-    return (
-      <>
-        <ul>
-          {tasks.map((task) => (
-            <TaskListItem key={task.id} task={task} />
-          ))}
-        </ul>
-        <Pagination
-          currentPage={pagination.page}
-          totalPages={pagination.totalPages}
-          itemsPerPage={pagination.limit}
-          totalItems={pagination.totalResults}
-          onPageChange={goToPage}
-          onLimitChange={setLimit}
-        />
-      </>
-    );
-  }, [tasks, error, goToPage, setLimit]);
-
   useEffect(() => {
     return () => {
       dispatch(clearError());
@@ -57,12 +22,37 @@ export const TaskList = (): JSX.Element => {
   return (
     <Layout
       pageContainerClassName="tasks-list-wrap"
-      headerChildren={headerChildren}
+      headerChildren={
+        <>
+          <NavButton to={'/task/new'} text={'Создать задачу'} />
+        </>
+      }
       sidebarPosition="left"
       childrenSidebar={<TaskFilterForm />}>
       <h1>Список задач</h1>
+      {error && <p>Ошибка: {error}</p>}
       <Loader isLoading={loading} variant="circle">
-        {tasksContent}
+        {tasks.length > 0 ? (
+          <>
+            <ul>
+              {tasks.map((task) => (
+                <TaskListItem key={task.id} task={task} />
+              ))}
+            </ul>
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              itemsPerPage={pagination.limit}
+              onPageChange={goToPage}
+              onLimitChange={setLimit}
+            />
+          </>
+        ) : (
+          <div>
+            <h2>Задачи не найдены</h2>
+            <p>Попробуйте изменить фильтры</p>
+          </div>
+        )}
       </Loader>
     </Layout>
   );

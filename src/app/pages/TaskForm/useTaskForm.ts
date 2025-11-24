@@ -1,5 +1,5 @@
 // src/app/pages/TaskForm/useTaskFormLogic.ts
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, ControllerRenderProps } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -77,14 +77,16 @@ export const useTaskForm = () => {
     }
   };
 
-  const handleCompletedChange =
+  const handleCompletedChange = useCallback(
     (field: ControllerRenderProps<CreateTask, 'isCompleted'>) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const checked = e.target.checked;
       field.onChange(checked);
       if (checked) {
         trigger('isImportant');
       }
-    };
+    },
+    [trigger]
+  );
 
   return {
     isEdit,
