@@ -3,3 +3,8 @@
   margin-top: 10px;
   color: #dc3545;
 }
+
+.invalid > .form-control {
+  border-color: #dc3545;
+  box-shadow: 0 0 10px #dc3545;
+}
