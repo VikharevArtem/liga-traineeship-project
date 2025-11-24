@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Logo } from './components/Logo/Logo';
-import './Header.css';
-import { HeaderProps } from './Header.types';
+import 'app/pages/Layout/components/Header/Header.css';
+import { HeaderProps } from 'app/pages/Layout/components/Header/Header.types';
 
 export const Header = ({ children }: HeaderProps) => {
   return (

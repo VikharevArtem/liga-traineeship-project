@@ -1,9 +1,8 @@
-// src/app/pages/TaskForm/useTaskFormLogic.ts
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, ControllerRenderProps } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { taskSchema } from './taskSchema';
+import { taskSchema } from 'app/pages/TaskForm/taskSchema';
 import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
 import { CreateTask, UpdateTask } from 'types/Task.types';
 import { addNewTask, fetchTask, updateTaskAsync, clearError } from 'src/slices/tasks/tasksSlice';

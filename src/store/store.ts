@@ -1,6 +1,6 @@
 import { configureStore, type Middleware } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
-import tasksReducer from '../slices/tasks/tasksSlice';
+import tasksReducer from 'src/slices/tasks/tasksSlice';
 
 const isDev = process.env.NODE_ENV === 'development';
 

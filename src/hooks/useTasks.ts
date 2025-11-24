@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useDebounce } from './useDebounce';
-import { useClientPagination } from './useClientPagination';
+import { useDebounce } from 'src/hooks/useDebounce';
+import { useClientPagination } from 'src/hooks/useClientPagination';
 import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
 import { fetchTasks, selectTasks } from 'src/slices/tasks/tasksSlice';
 import { stringToBoolean } from 'utils/stringsToBolean';
+import { SEARCH_DEBOUNCE_DELAY } from 'constants/debounceConstants';
 
 export const useTasks = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ export const useTasks = () => {
     };
   }, [filters]);
 
-  const debouncedApiFilters = useDebounce(apiFilters, 500);
+  const debouncedApiFilters = useDebounce(apiFilters, SEARCH_DEBOUNCE_DELAY);
 
   useEffect(() => {
     dispatch(fetchTasks({ filters: debouncedApiFilters }));
