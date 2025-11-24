@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit';
 import type { AxiosError } from 'axios';
 import type { RootState } from 'src/store/store';
 import type { components } from 'types/api';
@@ -6,19 +6,6 @@ import { getTasks, createTask, updateTask, deleteTask, getTaskById } from 'api/t
 import type { Task, CreateTask, UpdateTask } from 'types/Task.types';
 
 type ApiError = components['schemas']['Error'];
-interface TasksState {
-  tasks: Task[];
-  task: Task | null;
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: TasksState = {
-  tasks: [],
-  task: null,
-  loading: false,
-  error: null,
-};
 
 export type TaskFilters = {
   searchName?: string;
@@ -91,9 +78,15 @@ export const deleteTaskAsync = createAsyncThunk<number, number, { rejectValue: s
   }
 );
 
+const taskAdapter = createEntityAdapter<Task>();
+
 const tasksSlice = createSlice({
   name: 'tasks',
-  initialState,
+  initialState: taskAdapter.getInitialState<{ loading: boolean; error: string | null; task: Task | null }>({
+    loading: false,
+    error: null,
+    task: null,
+  }),
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -107,7 +100,7 @@ const tasksSlice = createSlice({
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.loading = false;
-        state.tasks = action.payload;
+        taskAdapter.setAll(state, action.payload);
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
@@ -126,24 +119,21 @@ const tasksSlice = createSlice({
         state.error = action.payload || action.error.message || 'Ошибка загрузки задачи';
       })
       .addCase(addNewTask.fulfilled, (state, action) => {
-        state.tasks.push(action.payload);
+        taskAdapter.addOne(state, action.payload);
       })
       .addCase(addNewTask.rejected, (state, action) => {
         state.error = action.payload || action.error.message || 'Ошибка создания';
       })
 
       .addCase(updateTaskAsync.fulfilled, (state, action) => {
-        const index = state.tasks.findIndex((t) => t.id === action.payload.id);
-        if (index !== -1) {
-          state.tasks[index] = action.payload;
-        }
+        taskAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateTaskAsync.rejected, (state, action) => {
         state.error = action.payload || action.error.message || 'Ошибка обновления';
       })
 
       .addCase(deleteTaskAsync.fulfilled, (state, action) => {
-        state.tasks = state.tasks.filter((t) => t.id !== action.payload);
+        taskAdapter.removeOne(state, action.payload);
       })
       .addCase(deleteTaskAsync.rejected, (state, action) => {
         state.error = action.payload || action.error.message || 'Ошибка удаления';
@@ -153,9 +143,9 @@ const tasksSlice = createSlice({
 
 export default tasksSlice.reducer;
 
-export const selectTasks = (state: RootState) => state.tasks.tasks;
-export const selectLoading = (state: RootState) => state.tasks.loading;
-export const selectError = (state: RootState) => state.tasks.error;
-export const selectTask = (state: RootState) => state.tasks.task;
+export const { selectAll: selectAllTasks, selectById: selectTaskById } = taskAdapter.getSelectors<RootState>(
+  (state) => state.tasks
+);
 
+export const selectTasks = selectAllTasks;
 export const { clearError } = tasksSlice.actions;

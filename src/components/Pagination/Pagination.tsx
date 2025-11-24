@@ -6,7 +6,6 @@ export const Pagination = ({
   currentPage,
   totalPages,
   itemsPerPage,
-  totalItems,
   onPageChange,
   onLimitChange,
   limitOptions = [5, 10, 20],

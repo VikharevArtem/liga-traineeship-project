@@ -3,37 +3,27 @@ import { useSearchParams } from 'react-router-dom';
 import { useDebounce } from './useDebounce';
 import { useClientPagination } from './useClientPagination';
 import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
-import { fetchTasks } from 'src/slices/tasks/tasksSlice';
-import type { RootState } from 'src/store/store';
+import { fetchTasks, selectTasks } from 'src/slices/tasks/tasksSlice';
 import { stringToBoolean } from 'utils/stringsToBolean';
-
-const selectTaskSlice = (state: RootState) => state.tasks;
 
 export const useTasks = () => {
   const dispatch = useAppDispatch();
-  const tasksData = useAppSelector(selectTaskSlice);
+  const tasks = useAppSelector(selectTasks);
 
-  const { tasks, loading, error } = useMemo(() => {
-    return {
-      tasks: tasksData.tasks,
-      loading: tasksData.loading,
-      error: tasksData.error,
-    };
-  }, [tasksData.tasks, tasksData.loading, tasksData.error]);
+  const { loading, error } = useAppSelector((state) => state.tasks);
 
   const [searchParams] = useSearchParams();
+  const searchName = searchParams.get('searchName');
+  const completedParam = searchParams.get('completed');
+  const importantParam = searchParams.get('important');
 
   const filters = useMemo(() => {
-    const searchName = searchParams.get('searchName');
-    const completedParam = searchParams.get('completed');
-    const importantParam = searchParams.get('important');
-
     return {
       searchName: searchName || undefined,
       isCompleted: stringToBoolean(completedParam) ?? undefined,
       isImportant: stringToBoolean(importantParam) ?? undefined,
     };
-  }, [searchParams]);
+  }, [searchName, completedParam, importantParam]);
 
   const apiFilters = useMemo(() => {
     return {
