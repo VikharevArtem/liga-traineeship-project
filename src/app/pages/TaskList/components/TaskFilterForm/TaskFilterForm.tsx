@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useTaskFilters } from './useTaskFilters';
-import { taskFilterConfig } from './TaskFilterForm.config';
-import { FilterKey } from './TaskFilterForm.types';
+import { taskFilterConfig } from 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm.config';
+import { FilterKey } from 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm.types';
+import { useTaskFilters } from 'src/hooks/useTaskFilters';
 import { Button } from 'components/Button/Button';
 import { SearchInput } from 'components/SearchInput';
-import './TaskFilterForm.css';
+import 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm.css';
 
 export function TaskFilterForm() {
   const { filters, setSearchName, setFilter, resetFilters, hasActiveFilters } = useTaskFilters();

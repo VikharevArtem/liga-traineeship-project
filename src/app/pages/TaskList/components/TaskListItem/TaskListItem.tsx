@@ -1,8 +1,7 @@
 import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TaskItemProps } from './TaskItemProps.types';
-import './TaskListItem.css';
-
+import { TaskItemProps } from 'app/pages/TaskList/components/TaskListItem/TaskItemProps.types';
+import 'app/pages/TaskList/components/TaskListItem//TaskListItem.css';
 import { useAppDispatch } from 'src/hooks/redux';
 import { deleteTaskAsync } from 'src/slices/tasks/tasksSlice';
 import { Button } from 'components/Button/Button';

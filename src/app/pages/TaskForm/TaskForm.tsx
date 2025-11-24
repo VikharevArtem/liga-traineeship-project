@@ -1,5 +1,5 @@
 import { Controller } from 'react-hook-form';
-import { useTaskForm } from 'app/pages/TaskForm/useTaskForm';
+import { useTaskForm } from 'src/hooks/useTaskForm';
 import { Layout } from 'app/pages/Layout/Layout';
 import { Checkbox } from 'components/Checkbox';
 import { TextField } from 'components/TextField';

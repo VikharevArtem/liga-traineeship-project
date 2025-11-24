@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
-import { FilterKey } from './TaskFilterForm.types';
+import { FilterKey } from 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm.types';
 import { stringToBoolean } from 'utils/stringsToBolean';
 
 export const useTaskFilters = () => {

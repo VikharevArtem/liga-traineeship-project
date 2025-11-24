@@ -1,4 +1,4 @@
-import { Layout } from '../Layout/Layout';
+import { Layout } from 'app/pages/Layout/Layout';
 
 export const NotFound = () => {
   return (

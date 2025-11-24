@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { TaskListItem } from './components/TaskListItem/TaskListItem';
-import { TaskFilterForm } from './components/TaskFilterForm/TaskFilterForm';
+import { TaskFilterForm } from 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm';
+import { TaskListItem } from 'app/pages/TaskList/components/TaskListItem/TaskListItem';
 import { NavButton } from 'app/pages/Layout/components/Header/components/NavButton/NavButton';
 import { Layout } from 'app/pages/Layout/Layout';
 import { useTasks } from 'src/hooks/useTasks';
