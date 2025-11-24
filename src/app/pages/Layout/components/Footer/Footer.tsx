@@ -1,4 +1,4 @@
-import 'app/pages/Layout/components/Footer/Footer';
+import 'app/pages/Layout/components/Footer/Footer.css';
 
 export const Footer = () => {
   return (
