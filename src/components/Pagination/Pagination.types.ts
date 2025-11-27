@@ -3,6 +3,4 @@ export interface PaginationProps {
   totalPages: number;
   itemsPerPage: number;
   onPageChange(page: number): void;
-  onLimitChange(limit: number): void;
-  limitOptions?: number[];
 }

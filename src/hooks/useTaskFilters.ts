@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { TaskFilters } from 'app/pages/TaskList/components/TaskFilterForm/TaskFilterForm.types';
 import { stringToBoolean } from 'utils/stringsToBolean';
@@ -9,27 +9,45 @@ import { SEARCH_DEBOUNCE_DELAY } from 'constants/debounceConstants';
 export const useTaskFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Читаем фильтры из URL
-  const defaultValues = {
-    searchName: searchParams.get('searchName') || '',
-    important: stringToBoolean(searchParams.get('important')),
-    completed: stringToBoolean(searchParams.get('completed')),
-  };
+  const urlValues = useMemo(() => {
+    return {
+      searchName: searchParams.get('searchName') || '',
+      important: stringToBoolean(searchParams.get('important')),
+      completed: stringToBoolean(searchParams.get('completed')),
+    };
+  }, [searchParams]);
 
   const form = useForm<TaskFilters>({
-    defaultValues,
+    defaultValues: urlValues,
+    mode: 'onChange',
   });
 
-  const { watch, reset } = form;
+  const { watch } = form;
   const searchName = watch('searchName');
   const debouncedSearch = useDebounce(searchName, SEARCH_DEBOUNCE_DELAY);
 
-  // Синхронизация: если URL изменился — обновляем форму
   useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+    const formSearch = form.getValues('searchName');
+    const formImportant = form.getValues('important');
+    const formCompleted = form.getValues('completed');
 
-  // Обновляем URL для searchName после debounce
+    const needsUpdate =
+      formSearch !== urlValues.searchName ||
+      formImportant !== urlValues.important ||
+      formCompleted !== urlValues.completed;
+
+    if (needsUpdate) {
+      form.reset(
+        {
+          searchName: urlValues.searchName,
+          important: urlValues.important,
+          completed: urlValues.completed,
+        },
+        { keepDirty: false, keepErrors: false }
+      );
+    }
+  }, [urlValues, form]);
+
   useEffect(() => {
     const current = searchParams.get('searchName') || '';
     if (debouncedSearch !== current) {
@@ -43,7 +61,6 @@ export const useTaskFilters = () => {
     }
   }, [debouncedSearch, searchParams, setSearchParams]);
 
-  // Универсальная функция для других фильтров
   const setFilter = <K extends keyof TaskFilters>(key: K, value: TaskFilters[K]) => {
     const newParams = new URLSearchParams(searchParams);
     if (value === null || value === '') {
@@ -55,13 +72,14 @@ export const useTaskFilters = () => {
   };
 
   const resetFilters = () => {
-    setSearchParams({}, { replace: true });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('important');
+    newParams.delete('completed');
+    setSearchParams(newParams, { replace: true });
   };
 
   const hasActiveFilters =
-    !!searchParams.get('searchName') ||
-    stringToBoolean(searchParams.get('important')) !== null ||
-    stringToBoolean(searchParams.get('completed')) !== null;
+    stringToBoolean(searchParams.get('important')) !== null || stringToBoolean(searchParams.get('completed')) !== null;
 
   return {
     form,

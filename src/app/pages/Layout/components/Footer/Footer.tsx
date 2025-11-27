@@ -1,11 +1,12 @@
-import 'app/pages/Layout/components/Footer/Footer.css';
+import { Typography } from '@mui/material';
+import { StyledContainer, StyledFooter } from 'app/pages/Layout/components/Footer/Footer.styles';
 
 export const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <p>&copy; 2025 Вихарев Артем</p>
-      </div>
-    </footer>
+    <StyledFooter component="footer">
+      <StyledContainer>
+        <Typography variant="body1">&copy; 2025 Вихарев Артем</Typography>
+      </StyledContainer>
+    </StyledFooter>
   );
 };
