@@ -6,6 +6,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   TextField,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -23,7 +24,33 @@ import { useTaskFilters } from 'src/hooks/useTaskFilters';
 
 export function TaskFilterForm({ onClose }: TaskFilterFormProps) {
   const { form, setFilter, resetFilters, hasActiveFilters } = useTaskFilters();
-  const { control, setValue } = form;
+  const { control } = form;
+
+  const handleClearSearch = () => {
+    form.setValue('searchName', '');
+  };
+
+  const handleFilterChange = (key: FilterKey) => (e: SelectChangeEvent<string>) => {
+    const value = e.target.value;
+    const option = taskFilterConfig[key].options.find((opt) => opt.value === value);
+    const booleanValue = option ? option.boolean : null;
+
+    form.setValue(key, booleanValue);
+    setFilter(key, booleanValue);
+  };
+
+  const renderFilterLabel = (config: typeof taskFilterConfig[FilterKey]) => {
+    const defaultLabel = <em key="all-label">Все задачи</em>;
+
+    return (selected: string | undefined) => {
+      if (!selected) {
+        return;
+      }
+
+      const option = config.options.find((opt) => opt.value === selected);
+      return option ? option.label : defaultLabel;
+    };
+  };
 
   return (
     <StyledContainer disableGutters>
@@ -45,10 +72,7 @@ export function TaskFilterForm({ onClose }: TaskFilterFormProps) {
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="очистить поле поиска"
-                      onClick={() => {
-                        field.onChange('');
-                        setValue('searchName', '');
-                      }}
+                      onClick={handleClearSearch}
                       onMouseDown={(e) => e.preventDefault()}
                       edge="end"
                       size="small">
@@ -78,22 +102,12 @@ export function TaskFilterForm({ onClose }: TaskFilterFormProps) {
                 <FormControl size="small" fullWidth>
                   <InputLabel>{config.label}</InputLabel>
                   <Select
+                    {...field}
                     value={selectValue}
                     label={config.label}
                     displayEmpty
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const option = config.options.find((opt) => opt.value === value);
-                      const booleanValue = option ? option.boolean : null;
-
-                      field.onChange(booleanValue);
-                      setFilter(key, booleanValue);
-                    }}
-                    renderValue={(selected) => {
-                      if (!selected) return;
-                      const option = config.options.find((opt) => opt.value === selected);
-                      return option ? option.label : <em>Все задачи</em>;
-                    }}>
+                    onChange={handleFilterChange(key)}
+                    renderValue={renderFilterLabel(config)}>
                     <MenuItem value="">
                       <em>Все задачи</em>
                     </MenuItem>
