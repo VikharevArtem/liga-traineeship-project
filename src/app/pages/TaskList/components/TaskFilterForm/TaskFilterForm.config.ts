@@ -11,7 +11,7 @@ export const taskFilterConfig: FilterConfig = {
   completed: {
     label: 'По статусу:',
     options: [
-      { value: 'completed', label: 'Завершенная', boolean: true },
+      { value: 'completed', label: 'Завершенные', boolean: true },
       { value: 'incomplete', label: 'Незавершенные', boolean: false },
     ],
   },

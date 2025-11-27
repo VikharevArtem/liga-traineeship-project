@@ -1,19 +1,21 @@
+import { AppBar, Container, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Logo } from './components/Logo/Logo';
-import 'app/pages/Layout/components/Header/Header.css';
+import { Logo } from 'app/pages/Layout/components/Header/components/Logo/Logo';
 import { HeaderProps } from 'app/pages/Layout/components/Header/Header.types';
 
-export const Header = ({ children }: HeaderProps) => {
+export const Header = ({ children }: HeaderProps): JSX.Element => {
   return (
-    <header>
-      <div className="header-container">
-        <div className="header-logo">
-          <Link to="/">
-            <Logo />
-          </Link>
-        </div>
-        {children && <div className="nav-container">{children}</div>}
-      </div>
-    </header>
+    <AppBar position="static" sx={{ bgcolor: 'headerBgColor.main' }}>
+      <Container maxWidth="xl" sx={{ py: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Link to="/">
+              <Logo />
+            </Link>
+          </Box>
+          {children}
+        </Box>
+      </Container>
+    </AppBar>
   );
 };

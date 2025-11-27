@@ -1,13 +1,12 @@
 import { NavLink } from 'react-router-dom';
+import { Button } from '@mui/material';
 import { NavButtonProps } from 'app/pages/Layout/components/Header/components/NavButton/NavButton.types';
-import { Button } from 'components/Button/Button';
 
-export const NavButton = ({ to, text, children, onClick }: NavButtonProps): JSX.Element => {
+export const NavButton = ({ to, text, onClick }: NavButtonProps): JSX.Element => {
   return (
     <NavLink to={to}>
-      <Button onClick={onClick}>
+      <Button variant="contained" color="primary" onClick={onClick}>
         {text}
-        {children}
       </Button>
     </NavLink>
   );

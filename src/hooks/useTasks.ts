@@ -40,7 +40,7 @@ export const useTasks = () => {
     dispatch(fetchTasks({ filters: debouncedApiFilters }));
   }, [dispatch, debouncedApiFilters]);
 
-  const { pagination, paginatedItems, goToPage, setLimit } = useClientPagination(tasks.length, 5);
+  const { pagination, paginatedItems, goToPage } = useClientPagination(tasks.length);
 
   const paginatedTasks = useMemo(() => {
     return tasks.slice(paginatedItems.from, paginatedItems.to);
@@ -53,6 +53,5 @@ export const useTasks = () => {
     filters,
     pagination,
     goToPage,
-    setLimit,
   };
 };

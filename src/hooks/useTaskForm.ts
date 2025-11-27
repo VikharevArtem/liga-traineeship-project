@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, ControllerRenderProps } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { taskSchema } from 'app/pages/TaskForm/taskSchema';
 import { useAppDispatch, useAppSelector } from 'src/hooks/redux';
@@ -17,14 +17,12 @@ export const useTaskForm = () => {
   const { task, loading, error } = useAppSelector((state) => state.tasks);
   const [currentTask, setCurrentTask] = useState<UpdateTask | null>(null);
 
-  // Загрузка задачи при редактировании
   useEffect(() => {
     if (isEdit && !isNaN(taskId)) {
       dispatch(fetchTask(taskId));
     }
   }, [dispatch, isEdit, taskId]);
 
-  // Установка начальных значений при редактировании
   useEffect(() => {
     if (isEdit && task) {
       const taskData: UpdateTask = {
@@ -38,7 +36,6 @@ export const useTaskForm = () => {
     }
   }, [isEdit, task]);
 
-  // Очистка ошибки при размонтировании
   useEffect(() => {
     return () => {
       dispatch(clearError());
@@ -50,7 +47,6 @@ export const useTaskForm = () => {
     handleSubmit,
     reset,
     formState: { isValid, isSubmitted },
-    trigger,
   } = useForm<CreateTask>({
     resolver: yupResolver(taskSchema),
     context: { initialTask: currentTask },
@@ -72,20 +68,9 @@ export const useTaskForm = () => {
       }
       navigate('/tasks');
     } catch (err) {
-      // Ошибка уже обработана через Redux
+      // Ошибка обработана через Redux
     }
   };
-
-  const handleCompletedChange = useCallback(
-    (field: ControllerRenderProps<CreateTask, 'isCompleted'>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const checked = e.target.checked;
-      field.onChange(checked);
-      if (checked) {
-        trigger('isImportant');
-      }
-    },
-    [trigger]
-  );
 
   return {
     isEdit,
@@ -96,6 +81,5 @@ export const useTaskForm = () => {
     onSubmit,
     isValid,
     isSubmitted,
-    handleCompletedChange,
   };
 };

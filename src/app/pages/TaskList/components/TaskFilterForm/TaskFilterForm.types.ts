@@ -1,3 +1,7 @@
+export interface TaskFilterFormProps {
+  onClose?: () => void;
+}
+
 export type FilterOption = {
   value: string;
   label: string;

@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler, MouseEvent } from 'react';
-import './SearchInput.css';
+
 import { SearchInputProps } from './SearchInput.types';
 
 export function SearchInput({ onChange, value, onReset, placeholder }: SearchInputProps) {

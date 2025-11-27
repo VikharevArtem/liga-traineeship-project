@@ -3,18 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 
 export const useClientPagination = (totalItems: number, defaultLimit = 5) => {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const rawPage = searchParams.get('p');
   const page = useMemo(() => {
     const num = rawPage ? parseInt(rawPage, 10) : 1;
     return isNaN(num) || num < 1 ? 1 : num;
   }, [rawPage]);
 
-  const rawLimit = searchParams.get('l');
-  const limit = useMemo(() => {
-    const num = rawLimit ? parseInt(rawLimit, 10) : defaultLimit;
-    return isNaN(num) || num < 1 ? defaultLimit : num;
-  }, [rawLimit, defaultLimit]);
+  const limit = defaultLimit;
 
   const totalResults = totalItems;
   const totalPages = Math.ceil(totalResults / limit);
@@ -43,20 +38,6 @@ export const useClientPagination = (totalItems: number, defaultLimit = 5) => {
     [searchParams, setSearchParams]
   );
 
-  const setLimit = useCallback(
-    (newLimit: number) => {
-      const params = new URLSearchParams(searchParams);
-      if (newLimit > 0) {
-        params.set('l', newLimit.toString());
-      } else {
-        params.delete('l');
-      }
-      params.set('p', '1');
-      setSearchParams(params);
-    },
-    [searchParams, setSearchParams]
-  );
-
   return {
     pagination: {
       page: safePage,
@@ -66,6 +47,5 @@ export const useClientPagination = (totalItems: number, defaultLimit = 5) => {
     },
     paginatedItems,
     goToPage,
-    setLimit,
   };
 };
